@@ -13,43 +13,92 @@ const loadMore = document.querySelector('.load-more');
 searchForm.addEventListener('submit', onSearch);
 loadMore.addEventListener('click', onLoadMore);
 
+let perPage = 40;
+
 function onSearch(e) {
   e.preventDefault();
+
+  clearPhotos();
   apiService.query = e.currentTarget.elements.searchQuery.value;
-  apiService.fetchImages();
+  if (apiService.query === '') {
+    return;
+  } else {
+    apiService.resetPage();
+    apiService.fetchImages().then(data => {
+      if (data.total === 0) {
+        Notiflix.Notify.failure('За Вашим запитом нічого не знайдено');
+      } else {
+        createGalleryMarkup(data.hits);
+        loadMore.classList.remove('none');
+      }
+    });
+  }
 }
 
 function onLoadMore() {
-  apiService.fetchImages();
+  apiService.fetchImages().then(data => {
+    perPage += 40;
+    console.log(perPage);
+    if (perPage >= data.totalHits) {
+      Notiflix.Notify.info(
+        "We're sorry, but you've reached the end of search results."
+      );
+      loadMore.classList.add('none');
+    }
+    createGalleryMarkup(data.hits);
+  });
 }
 
-const createGalleryItem = ({ preview, original, description }) => {
+function clearPhotos() {
+  galleryRef.innerHTML = '';
+}
+
+const createGalleryItem = ({
+  webformatURL,
+  largeImageURL,
+  tags,
+  likes,
+  views,
+  comments,
+  downloads,
+}) => {
   return `
     <div class="photo-card">
-  <a class="gallery__item" href=""><img src="" alt="" loading="lazy" /></a>
+  <a class="gallery__item" href="${largeImageURL}">
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+  </a>
   <div class="info">
     <p class="info-item">
-      <b>Likes</b>
+      <b>Likes</b><br />
+      ${likes}
     </p>
     <p class="info-item">
-      <b>Views</b>
+      <b>Views</b><br />
+      ${views}
     </p>
     <p class="info-item">
-      <b>Comments</b>
+      <b>Comments</b><br />
+      ${comments}
     </p>
     <p class="info-item">
-      <b>Downloads</b>
+      <b>Downloads</b><br />
+      ${downloads}
     </p>
   </div>
 </div>`;
 };
 
-const createGalleryMarkup = item => {
-  const galleryMarkup = item.map(createGalleryItem).join('');
+const createGalleryMarkup = data => {
+  const galleryMarkup = data.map(createGalleryItem).join('');
   galleryRef.insertAdjacentHTML('beforeend', galleryMarkup);
+  lightbox();
 };
 
-const lightbox = new SimpleLightbox('.gallery a', {
-  captionsData: 'alt',
-  captionDelay: 250,
-});
+function lightbox() {
+  let lightbox = new SimpleLightbox('.gallery a', {
+    captions: true,
+    captionsData: 'alt',
+    captionDelay: 150,
+  });
+  lightbox.refresh();
+}
