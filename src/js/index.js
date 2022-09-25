@@ -1,5 +1,5 @@
 import Notiflix from 'notiflix';
-import axios from 'axios';
+
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import ApiService from './fetch';
@@ -15,7 +15,7 @@ loadMore.addEventListener('click', onLoadMore);
 
 let perPage = 40;
 
-function onSearch(e) {
+async function onSearch(e) {
   e.preventDefault();
 
   clearPhotos();
@@ -24,7 +24,7 @@ function onSearch(e) {
     return;
   } else {
     apiService.resetPage();
-    apiService.fetchImages().then(data => {
+    await apiService.fetchImages().then(data => {
       if (data.total === 0) {
         Notiflix.Notify.failure('За Вашим запитом нічого не знайдено');
       } else {
@@ -36,8 +36,8 @@ function onSearch(e) {
   }
 }
 
-function onLoadMore() {
-  apiService.fetchImages().then(data => {
+async function onLoadMore() {
+  await apiService.fetchImages().then(data => {
     perPage += 40;
     if (perPage >= data.totalHits) {
       Notiflix.Notify.info(
