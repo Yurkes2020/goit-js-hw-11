@@ -3,7 +3,6 @@ import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import ApiService from './fetch';
-import '../sass/index.scss';
 
 const apiService = new ApiService();
 
