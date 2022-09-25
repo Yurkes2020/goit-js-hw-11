@@ -3,6 +3,7 @@ import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import ApiService from './fetch';
+import '../sass/index.scss';
 
 const apiService = new ApiService();
 
@@ -29,6 +30,7 @@ function onSearch(e) {
         Notiflix.Notify.failure('За Вашим запитом нічого не знайдено');
       } else {
         createGalleryMarkup(data.hits);
+        Notiflix.Notify.success(`Для вас знайдено ${data.totalHits} картинок`);
         loadMore.classList.remove('none');
       }
     });
@@ -38,7 +40,6 @@ function onSearch(e) {
 function onLoadMore() {
   apiService.fetchImages().then(data => {
     perPage += 40;
-    console.log(perPage);
     if (perPage >= data.totalHits) {
       Notiflix.Notify.info(
         "We're sorry, but you've reached the end of search results."
