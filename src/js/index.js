@@ -39,6 +39,7 @@ async function onSearch(e) {
 async function onLoadMore() {
   await apiService.fetchImages().then(data => {
     perPage += 40;
+
     if (perPage >= data.totalHits) {
       Notiflix.Notify.info(
         "We're sorry, but you've reached the end of search results."
@@ -46,6 +47,7 @@ async function onLoadMore() {
       loadMore.classList.add('none');
     }
     createGalleryMarkup(data.hits);
+    smoothScroll();
   });
 }
 
@@ -101,4 +103,13 @@ function lightbox() {
     captionDelay: 150,
   });
   lightbox.refresh();
+}
+function smoothScroll() {
+  const { height: cardHeight } =
+    galleryRef.firstElementChild.getBoundingClientRect();
+  console.log({ height: cardHeight });
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
