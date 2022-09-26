@@ -51,9 +51,9 @@ button {
 
 .gallery {
     display: grid;
-    max-width: 1140px;
+
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    grid-auto-rows: 250px;
+
     grid-gap: 12px;
     justify-content: center;
     margin-left: auto;

@@ -17,8 +17,8 @@ let perPage = 40;
 
 async function onSearch(e) {
   e.preventDefault();
-
   clearPhotos();
+
   apiService.query = e.currentTarget.elements.searchQuery.value;
   if (apiService.query === '') {
     return;
